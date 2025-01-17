@@ -315,17 +315,6 @@ namespace Projet_desktop.Views
             }
         }
 
-        //private void UpdateBuildings()
-        //{
-        //    foreach (UIElement uiElement in FarmGrid.Children)
-        //    {
-        //        if (uiElement is Button button && button.Tag is FarmPlot fm && fm.Building != null)
-        //        {
-        //            button.Content = fm.Building.BuildingType.Type;
-        //        }
-        //    }
-        //}
-
         private void UpdateDateText()
         {
             DateTextBlock.Text = user.Date.ToString("dddd dd MMMM yyyy");
@@ -376,13 +365,13 @@ namespace Projet_desktop.Views
 
                     placementModeActivated = false;
 
-                    ShopContainer.Visibility = Visibility.Visible;
-                    Shop.Visibility = Visibility.Visible;
-                    DashBoard.Visibility = Visibility.Visible;
-                    Param.Visibility = Visibility.Visible;
-                    DateTextBlock.Visibility = Visibility.Visible;
-                    NextDay.Visibility = Visibility.Visible;
-                    MoneyTextBlock.Visibility = Visibility.Visible;
+                    ShopContainer.Visibility      = Visibility.Visible;
+                    Shop.Visibility               = Visibility.Visible;
+                    DashBoard.Visibility          = Visibility.Visible;
+                    Param.Visibility              = Visibility.Visible;
+                    DateTextBlock.Visibility      = Visibility.Visible;
+                    NextDay.Visibility            = Visibility.Visible;
+                    MoneyTextBlock.Visibility     = Visibility.Visible;
                     PlacementTextBlock.Visibility = Visibility.Collapsed;
                     LoadDashBoard();
                     UpdateMoneyText();
@@ -399,15 +388,33 @@ namespace Projet_desktop.Views
                 {
                     if (plot.Building.BuildingType.Type == "Field")
                     {
-
+                        if (plot.Building is Field building)
+                        {
+                            FieldContainer.Visibility  = Visibility.Visible;
+                            FieldProductTextBlock.Text = building.Products.Count.ToString() + " products";
+                            FieldCropTextBlock.Text    = building.Crops.Count.ToString() + " crops";
+                            FieldWaterTextBlock.Text   = "Water : " + building.Water;
+                            FieldStore_Button.Tag      = building;
+                            FieldWater_Button.Tag      = building;
+                        }
                     }
                     else if ((plot.Building.BuildingType.Type == "ChickenCoop") ||
                              (plot.Building.BuildingType.Type == "SheepBarn") ||
                              (plot.Building.BuildingType.Type == "CowBarn"))
                     {
-                        LiveStockContainer.Visibility = Visibility.Visible;
-                        StorageProductTextBlock.Text = plot.Building.Products.Count.ToString() + " products";
-                        SellButton.Tag = plot.Building;
+                        if (plot.Building is LiveStockBuilding building)
+                        {
+                            LiveStockContainer.Visibility      = Visibility.Visible;
+                            LiveStockProductTextBlock.Text     = building.Products.Count.ToString() + " products";
+                            LiveStockAnimalTextBlock.Text      = building.Animals.Count.ToString() + " animals";
+                            LiveStockFoodTextBlock.Text        = "Food : " + building.Food;
+                            LiveStockWaterTextBlock.Text       = "Water : " + building.Water;
+                            LiveStockCleanlinessTextBlock.Text = "Cleanliness : " + building.Cleanliness;
+                            LiveStockStore_Button.Tag          = building;
+                            LiveStockFood_Button.Tag           = building;
+                            LiveStockWater_Button.Tag          = building;
+                            LiveStockClean_Button.Tag          = building;
+                        }
                     }
                     else if (plot.Building.BuildingType.Type == "Storage")
                     {
@@ -458,6 +465,103 @@ namespace Projet_desktop.Views
         private void Next_Day_Click(object sender, RoutedEventArgs e)
         {
             user.Date = user.Date.AddDays(1);
+            foreach (Field field in fields)
+            {
+                foreach (Crop crop in field.Crops)
+                {
+                    crop.GrowthTime += 1;
+                    if (crop.GrowthTime == crop.PlantSpecies.ProductType.ProductionTime && field.Products.Count != field.BuildingType.Capacity)
+                    {
+                        Product p = new(crop.PlantSpecies.ProductType.ProductTypeID, products.Count);
+                        field.Products.Add(p);
+                        products.Add(p);
+                        field.Crops.Remove(crop);
+                        crops.Remove(crop);
+                    }
+                    else if (field.Products.Count == field.BuildingType.Capacity)
+                        crop.GrowthTime -= 1;
+                    if (field.Water > 0)
+                    {
+                        field.Water -= 1;
+                        if (crop.Thirsty)
+                            crop.Thirsty = false;
+                    } 
+                    else
+                    {
+                        if (crop.Thirsty)
+                        {
+                            field.Crops.Remove(crop);
+                            crops.Remove(crop);
+                        }
+                        else
+                            crop.Thirsty = true;
+                    }
+                }
+            }
+            foreach (LiveStockBuilding building in live_stock_buildings)
+            {
+                foreach (Animal animal in building.Animals)
+                {
+                    animal.Age += 1;
+                    animal.TimeUntilHarvest -= 1;
+                    if (animal.TimeUntilHarvest == 0 && building.Products.Count != building.BuildingType.Capacity)
+                    {
+                        Product p = new(animal.AnimalSpecies.ProductType.ProductTypeID, products.Count);
+                        building.Products.Add(p);
+                        products.Add(p);
+                        animal.TimeUntilHarvest = animal.AnimalSpecies.ProductType.ProductionTime;
+                    }
+                    else if (building.Products.Count != building.BuildingType.Capacity)
+                        animal.TimeUntilHarvest += 1;
+                    if (animal.Age == animal.AnimalSpecies.AverageAge)
+                    {
+                        building.Animals.Remove(animal);
+                        animals.Remove(animal);
+                    }
+                    if (building.Food > 0)
+                    {
+                        building.Food -= 1;
+                        if (animal.Hungry)
+                            animal.Hungry = false;
+                    }
+                    else
+                    {
+                        if (animal.Hungry)
+                        {
+                            building.Animals.Remove(animal);
+                            animals.Remove(animal);
+                        }
+                        else
+                            animal.Hungry = true;
+                    }
+                    if (building.Water > 0)
+                    {
+                        building.Water -= 1;
+                        if (animal.Thirsty)
+                            animal.Thirsty = false;
+                    }
+                    else
+                    {
+                        if (animal.Thirsty)
+                        {
+                            building.Animals.Remove(animal);
+                            animals.Remove(animal);
+                        }
+                        else
+                            animal.Thirsty = true;
+                    }
+                    if (building.Cleanliness > 0)
+                    {
+                        building.Cleanliness -= 1;
+                        if (animal.Clean)
+                            animal.Clean = false;
+                    }
+                    else
+                    {
+                        animal.Clean = true;
+                    }
+                }
+            }
             UpdateDateText();
         }
 
@@ -474,9 +578,17 @@ namespace Projet_desktop.Views
         {
             ParamContainer.Visibility = Visibility.Collapsed;
         }
+        private void CloseLiveStock_Click(object sender, RoutedEventArgs e)
+        {
+            LiveStockContainer.Visibility = Visibility.Collapsed;
+        }
         private void CloseStorage_Click(object sender, RoutedEventArgs e)
         {
             StorageContainer.Visibility = Visibility.Collapsed;
+        }
+        private void CloseField_Click(object sender, RoutedEventArgs e)
+        {
+            FieldContainer.Visibility = Visibility.Collapsed;
         }
         private void OpenParam_Click(object sender, RoutedEventArgs e)
         {
@@ -500,9 +612,78 @@ namespace Projet_desktop.Views
                     building.Products.RemoveAt(i);
                     user.Money += product.ProductType.Price;
                     products.Remove(product);
-                    StorageProductTextBlock.Text = products.Count.ToString() + " products";
+                    StorageProductTextBlock.Text = building.Products.Count.ToString() + " products";
                     LoadDashBoard();
                 }
+            }
+        }
+        private void Store_Products_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+
+            if (button?.Tag is StorageBuilding building)
+            {
+                for (int i = building.Products.Count - 1; i >= 0; i--)
+                {
+                    if (storage_buildings.Count == 0)
+                    {
+                        MessageBox.Show("You should have storage building to store products.");
+                        return;
+                    }
+                    var product = building.Products[i];
+                    bool added = false;
+                    foreach (StorageBuilding storage in storage_buildings)
+                    {
+                        if (storage.Products.Count != storage.BuildingType.Capacity && !added)
+                        {
+                            storage.Products.Add(product);
+                            added = true;
+                        }
+                    }
+                    if (!added)
+                    {
+                        MessageBox.Show("You should have more storage buildings to store products.");
+                        return;
+                    }
+                    
+                    building.Products.RemoveAt(i);
+                    LiveStockProductTextBlock.Text = building.Products.Count.ToString() + " products";
+                }
+            }
+        }
+        private void Feed_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+
+            if (button?.Tag is LiveStockBuilding building)
+            {
+                building.Food = 5;
+                LiveStockFoodTextBlock.Text = "Food : " + building.Food;
+            }
+        }
+        private void Water_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+
+            if (button?.Tag is LiveStockBuilding building)
+            {
+                building.Water = 5;
+                LiveStockWaterTextBlock.Text = "Water : " + building.Water;
+            }
+            else if (button?.Tag is Field field)
+            {
+                field.Water = 5;
+                FieldWaterTextBlock.Text = "Water : " + field.Water;
+            }
+        }
+        private void Clean_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+
+            if (button?.Tag is LiveStockBuilding building)
+            {
+                building.Cleanliness = 10;
+                LiveStockCleanlinessTextBlock.Text = "Cleanliness : " + building.Cleanliness;
             }
         }
 

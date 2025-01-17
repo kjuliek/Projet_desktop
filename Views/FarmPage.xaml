@@ -417,24 +417,38 @@
 			HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 			Grid.RowSpan="4" Grid.ColumnSpan="3"
 			MouseDown="ParamContainer_MouseDown">
-			<Grid Width="300" Height="200"
+			<Grid Width="700" Height="400"
                   Background="White"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center">
 				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-					<TextBlock Text="Param"
-                               FontSize="16"
+					<TextBlock Text="Field"
+                               FontSize="15"
                                HorizontalAlignment="Center"
                                Margin="0,0,0,20"/>
-					<Button Content="MainMenu"
-                            Width="100" Height="30"
-                            Click="MainMenu_Click"/>
-					<Button Content="Save"
-                            Width="100" Height="30"
-                            Click="Save_Click"/>
+					<TextBlock Name="FieldCropTextBlock"
+                               FontSize="15"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,20"/>
+					<TextBlock Name="FieldProductTextBlock"
+                               FontSize="15"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,20"/>
+					<Button Name="FieldStore_Button"
+							Content="Store Products"
+                            Width="80" Height="25"
+                            Click="Store_Products_Click"/>
+					<TextBlock Name="FieldWaterTextBlock"
+                               FontSize="15"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,10"/>
+					<Button Name="FieldWater_Button"
+							Content="Water"
+                            Width="80" Height="25"
+                            Click="Water_Click"/>
 					<Button Content="Fermer"
-                            Width="100" Height="30"
-                            Click="CloseParam_Click"/>
+                            Width="80" Height="25"
+                            Click="CloseField_Click"/>
 				</StackPanel>
 			</Grid>
 		</Grid>
@@ -446,49 +460,53 @@
 			HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
 			Grid.RowSpan="4" Grid.ColumnSpan="3"
 			MouseDown="ParamContainer_MouseDown">
-			<Grid Width="300" Height="200"
+			<Grid Width="700" Height="400"
                   Background="White"
                   HorizontalAlignment="Center"
                   VerticalAlignment="Center">
 				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-					<TextBlock Name="LiveStock"
-                               FontSize="16"
+					<TextBlock Text="LiveStock"
+                               FontSize="17"
                                HorizontalAlignment="Center"
-                               Margin="0,0,0,20"/>
+                               Margin="0,0,0,0"/>
 					<TextBlock Name="LiveStockAnimalTextBlock"
-                               FontSize="16"
+                               FontSize="15"
                                HorizontalAlignment="Center"
-                               Margin="0,0,0,20"/>
+                               Margin="0,10,0,10"/>
 					<TextBlock Name="LiveStockProductTextBlock"
-                               FontSize="16"
+                               FontSize="15"
                                HorizontalAlignment="Center"
-                               Margin="0,0,0,20"/>
-					<Button Content="Store Products"
-                            Width="100" Height="30"
+                               Margin="0,10,0,10"/>
+					<Button Name="LiveStockStore_Button"
+							Content="Store Products"
+                            Width="80" Height="25"
                             Click="Store_Products_Click"/>
-					<TextBlock Name="LiveStockFood"
-                               FontSize="16"
+					<TextBlock Name="LiveStockFoodTextBlock"
+                               FontSize="15"
                                HorizontalAlignment="Center"
-                               Margin="0,0,0,20"/>
-					<Button Content="Feed"
-                            Width="100" Height="30"
+                               Margin="0,10,0,10"/>
+					<Button Name="LiveStockFood_Button"
+							Content="Feed"
+                            Width="80" Height="25"
                             Click="Feed_Click"/>
-					<TextBlock Name="LiveStockWater"
-                               FontSize="16"
+					<TextBlock Name="LiveStockWaterTextBlock"
+                               FontSize="15"
                                HorizontalAlignment="Center"
-                               Margin="0,0,0,20"/>
-					<Button Content="Water"
-                            Width="100" Height="30"
+                               Margin="0,10,0,10"/>
+					<Button Name="LiveStockWater_Button"
+							Content="Water"
+                            Width="80" Height="25"
                             Click="Water_Click"/>
-					<TextBlock Name="LiveStockCleanliness"
-                               FontSize="16"
+					<TextBlock Name="LiveStockCleanlinessTextBlock"
+                               FontSize="15"
                                HorizontalAlignment="Center"
-                               Margin="0,0,0,20"/>
-					<Button Content="Clean"
-                            Width="100" Height="30"
+                               Margin="0,10,0,10"/>
+					<Button Name="LiveStockClean_Button"
+							Content="Clean"
+                            Width="80" Height="25"
                             Click="Clean_Click"/>
 					<Button Content="Fermer"
-                            Width="100" Height="30"
+                            Width="80" Height="25"
                             Click="CloseLiveStock_Click"/>
 				</StackPanel>
 			</Grid>
